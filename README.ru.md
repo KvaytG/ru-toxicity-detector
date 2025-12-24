@@ -7,7 +7,7 @@
 ## 📚 Использование
 
 ```python
-from toxic_detector import ToxicityDetector
+from toxicity_detector import ToxicityDetector
 
 texts = [
     'Ты чего берега попутал?',                  # 0.9977
