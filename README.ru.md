@@ -10,11 +10,11 @@
 from toxicity_detector import ToxicityDetector
 
 texts = [
-    'Ты чего берега попутал?',                  # 0.9977
-    'Это правый берег реки, не путай с левым.'  # 0.0141
+    'Ты чего, берега попутал?',                  # {'is_toxic': True, 'probability': 0.8041}
+    'Это правый берег реки, не путай с левым.'   # {'is_toxic': False, 'probability': 0.1162}
 ]
 
-detector = ToxicityDetector()
+detector = ToxicityDetector(0.5)
 for idx, text in enumerate(texts, start=1):
     print(f'{idx}) {detector.predict(text)}')
 ```
