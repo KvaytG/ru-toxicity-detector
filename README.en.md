@@ -4,6 +4,25 @@
 
 A simple toxicity detector.
 
+## 🔍 About
+
+### How It Works
+
+The model is built on [rubert-tiny2](https://huggingface.co/cointegrated/rubert-tiny2) and trained using knowledge distillation from the more powerful [russian_toxicity_classifier](https://huggingface.co/s-nlp/russian_toxicity_classifier). The training corpus used is the [Russian Language Toxic Comments](https://www.kaggle.com/datasets/blackmoon/russian-language-toxic-comments) dataset. The architecture features a hybrid approach: neural network embeddings are supplemented by signals from a built-in profanity dictionary (including an exceptions system). This allows the model to achieve high accuracy while maintaining a minimal size.
+
+### Quality Metrics
+
+The model was tested on an independent test set that was not used during training. To minimize false positives, the threshold was optimized for **Precision 95%+**.
+
+| Metric                  | Value    |
+|-------------------------|----------|
+| **Accuracy**            | **0.89** |
+| **Precision (Toxic)**   | **0.98** |
+| **Recall (Toxic)**      | **0.67** |
+| **F1-score (Weighted)** | **0.89** |
+
+The high **Precision (0.98)** ensures that the model almost never produces false positives. The lower Recall (0.67) is a deliberate trade-off to ensure a comfortable user experience.
+
 ## 📚 Usage
 
 ```python
