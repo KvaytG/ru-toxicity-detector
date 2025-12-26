@@ -10,8 +10,9 @@
 from toxicity_detector import ToxicityDetector
 
 texts = [
-    'Ты чего, берега попутал?',                  # {'is_toxic': True, 'probability': 0.8041}
-    'Это правый берег реки, не путай с левым.'   # {'is_toxic': False, 'probability': 0.1162}
+    'Ты чего, берега попутал?',                  # {'is_toxic': True, 'confidence': 0.5646}
+    'Это правый берег реки, не путай с левым.',  # {'is_toxic': False, 'confidence': 0.0341}
+    "Ты дурачьё."                                # {'is_toxic': True, 'confidence': 0.9328}
 ]
 
 detector = ToxicityDetector(0.5)
