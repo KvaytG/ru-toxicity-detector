@@ -1,6 +1,6 @@
 [project]
 name = "ru-toxicity-detector"
-version = "1.0.1"
+version = "1.1.0"
 description = "A simple toxicity detector."
 readme = "README.md"
 requires-python = ">=3.11"

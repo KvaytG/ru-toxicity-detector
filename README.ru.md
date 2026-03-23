@@ -16,27 +16,35 @@
 
 | Метрика                 | Значение |
 |-------------------------|----------|
-| **Accuracy**            | **0.89** |
-| **Precision (Toxic)**   | **0.98** |
-| **Recall (Toxic)**      | **0.67** |
-| **F1-score (Weighted)** | **0.89** |
+| **Accuracy**            | 0.88     |
+| **Precision (Toxic)**   | 0.96     |
+| **Recall (Toxic)**      | 0.65     |
+| **F1-score (Weighted)** | 0.88     |
 
-Высокий показатель **Precision (0.98)** гарантирует, что модель практически не допускает ложных срабатываний. Низкий Recall (0.67) является осознанным компромиссом для обеспечения комфортного пользовательского опыта.
+Высокий показатель **Precision (0.96)** гарантирует, что модель практически не допускает ложных срабатываний. Низкий Recall (0.65) является осознанным компромиссом для обеспечения комфортного пользовательского опыта.
 
 ## 📚 Использование
 
 ```python
 from toxicity_detector import ToxicityDetector
 
+# Создать детектор (можно указывать устройство)
+detector = ToxicityDetector(threshold=0.5, device="cpu")
+
 texts = [
-    'Ты чего, берега попутал?',                  # {'is_toxic': True, 'confidence': 0.5646}
-    'Это правый берег реки, не путай с левым.',  # {'is_toxic': False, 'confidence': 0.0341}
-    "Ты дурачьё."                                # {'is_toxic': True, 'confidence': 0.9328}
+    'Ты чего, берега попутал?',                  # {'is_toxic': True, 'confidence': 0.6536}
+    'Это правый берег реки, не путай с левым.',  # {'is_toxic': False, 'confidence': 0.0968}
+    "Ты дуралей."                                # {'is_toxic': True, 'confidence': 0.9711}
 ]
 
-detector = ToxicityDetector(0.5)
+# Предсказания по одному тексту
 for idx, text in enumerate(texts, start=1):
-    print(f'{idx}) {detector.predict(text)}')
+    print(f"{idx}) {detector.predict(text)}")
+
+# Предсказания батчем (быстрее для нескольких текстов)
+results = detector.predict_batch(texts)
+for idx, res in enumerate(results, start=1):
+    print(f"{idx}) {res}")
 ```
 
 ## 📥 Установка

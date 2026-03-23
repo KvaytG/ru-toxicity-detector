@@ -3,6 +3,7 @@ import numpy as np
 import pathlib
 from transformers import AutoTokenizer
 from optimum.onnxruntime import ORTModelForFeatureExtraction
+from .constants import EMBED_DIM
 from .preprocess import preprocess_text
 
 CURRENT_DIR = pathlib.Path(__file__).parent.resolve()
@@ -26,20 +27,26 @@ def _get_model_and_tokenizer():
 
 _model, _tokenizer = _get_model_and_tokenizer()
 
-def vectorize(text: str) -> np.ndarray:
-    text = preprocess_text(text)
+def _mean_pooling(outputs, attention_mask):
+    token_embeddings = outputs.last_hidden_state
+    mask = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    summed = torch.sum(token_embeddings * mask, dim=1)
+    counts = torch.clamp(mask.sum(dim=1), min=1e-9)
+    return summed / counts
+
+def vectorize_batch(texts: list[str]) -> torch.Tensor:
+    texts = [preprocess_text(t) if t else "" for t in texts]
     inputs = _tokenizer(
-        text,
+        texts,
         return_tensors="pt",
         padding=True,
         truncation=True,
-        max_length=312
+        max_length=EMBED_DIM
     )
     with torch.no_grad():
         outputs = _model(**inputs)
-    token_embeddings = outputs.last_hidden_state
-    input_mask_expanded = inputs['attention_mask'].unsqueeze(-1).expand(token_embeddings.size()).float()
-    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
-    sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
-    embedding = sum_embeddings / sum_mask
-    return embedding.numpy()
+    embeddings = _mean_pooling(outputs, inputs["attention_mask"])
+    return embeddings
+
+def vectorize(text: str) -> torch.Tensor:
+    return vectorize_batch([text])[0]

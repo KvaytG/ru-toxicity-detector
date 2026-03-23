@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
+from .constants import EMBED_DIM
 
 
 class Model(nn.Module):
-    def __init__(self, embedding_dim=312):
+    def __init__(self, embedding_dim: int = EMBED_DIM):
         super(Model, self).__init__()
         self.net = nn.Sequential(
             nn.Linear(embedding_dim + 1, 128),

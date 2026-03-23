@@ -19,8 +19,9 @@ class ToxicityCounter:
         if not text:
             return 0.0
         words = WORDS_PATTERN.findall(text.lower())
-        bad_count = 0
-        for word in words:
-            if self.bad_regex.fullmatch(word) and (not self.clean_regex.fullmatch(word)):
-                bad_count += 1
+        bad_words = [
+            w for w in words
+            if self.bad_regex.fullmatch(w) and not self.clean_regex.fullmatch(w)
+        ]
+        bad_count = len(bad_words)
         return 1.0 - math.pow(0.8, bad_count)
