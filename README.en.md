@@ -10,18 +10,18 @@ A simple toxicity detector.
 
 The model is built on [rubert-tiny2](https://huggingface.co/cointegrated/rubert-tiny2) and trained using knowledge distillation from the more powerful [russian_toxicity_classifier](https://huggingface.co/s-nlp/russian_toxicity_classifier). The training corpus used is the [Russian Language Toxic Comments](https://www.kaggle.com/datasets/blackmoon/russian-language-toxic-comments) dataset. The architecture features a hybrid approach: neural network embeddings are supplemented by signals from a built-in profanity dictionary (including an exceptions system). This allows the model to achieve high accuracy while maintaining a minimal size.
 
-### Quality metrics
+### Evaluation Results
 
 The model was tested on an independent test set that was not used during training. To minimize false positives, the threshold was optimized for **Precision 95%+**.
 
-| Metric                  | Value    |
-|-------------------------|----------|
-| **Accuracy**            | 0.88     |
-| **Precision (Toxic)**   | 0.96     |
-| **Recall (Toxic)**      | 0.65     |
-| **F1-score (Weighted)** | 0.88     |
+| Metric                | Value    | Comment                                       |
+|-----------------------|----------|-----------------------------------------------|
+| **Accuracy**          | 0.99     | High value due to significant class imbalance |
+| **Precision (Toxic)** | **0.95** | **95%** accuracy in classifying toxic content |
+| **Recall (Toxic)**    | 0.65     | The model detects ~2/3 of all toxic messages  |
+| **F1-score (Toxic)**  | 0.77     | Harmonic mean of precision and recall         |
 
-The high **Precision (0.96)** ensures that the model almost never produces false positives. The lower Recall (0.65) is a deliberate trade-off to ensure a comfortable user experience.
+The high **Precision (0.95)** ensures that the model almost never produces false positives. The lower Recall (0.65) is a deliberate trade-off to ensure a comfortable user experience.
 
 ## 📚 Usage
 
@@ -29,12 +29,12 @@ The high **Precision (0.96)** ensures that the model almost never produces false
 from toxicity_detector import ToxicityDetector
 
 # Create detector (optionally specify device)
-detector = ToxicityDetector(threshold=0.5, device="cpu")
+detector = ToxicityDetector(device="cpu")
 
 texts = [
-    'Ты чего, берега попутал?',                  # {'is_toxic': True, 'confidence': 0.6536}
-    'Это правый берег реки, не путай с левым.',  # {'is_toxic': False, 'confidence': 0.0968}
-    "Ты дуралей."                                # {'is_toxic': True, 'confidence': 0.9711}
+    'Ты берега попутал?',                        # {'is_toxic': False, 'score': 0.2875}
+    'Это правый берег реки, не путай с левым.',  # {'is_toxic': False, 'score': 0.0165}
+    "Ты дуралей."                                # {'is_toxic': True, 'score': 0.9969}
 ]
 
 # Predict one by one

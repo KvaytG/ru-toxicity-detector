@@ -16,3 +16,6 @@ venv/
 # Tests
 tests/
 test/
+
+# Models and large resources
+src/toxicity_detector/resources/rubert_tiny_onnx/

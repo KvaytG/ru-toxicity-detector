@@ -24,7 +24,7 @@ class ToxicityDetector:
     def _empty_result(self):
         return {
             "is_toxic": False,
-            "confidence": 0.0
+            "score": 0.0
         }
 
     def predict(self, text: str) -> dict:
@@ -42,7 +42,7 @@ class ToxicityDetector:
 
         return {
             "is_toxic": prob >= self.threshold,
-            "confidence": round(prob, 4)
+            "score": round(prob, 4)
         }
 
     def predict_batch(self, texts: list[str]) -> list[dict]:
@@ -70,7 +70,7 @@ class ToxicityDetector:
                 p = probs[idx]
                 results.append({
                     "is_toxic": p >= self.threshold,
-                    "confidence": round(p, 4)
+                    "score": round(p, 4)
                 })
                 idx += 1
         return results

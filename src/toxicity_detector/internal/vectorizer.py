@@ -1,9 +1,8 @@
-import torch
-import numpy as np
 import pathlib
-from transformers import AutoTokenizer
+import torch
 from optimum.onnxruntime import ORTModelForFeatureExtraction
-from .constants import EMBED_DIM
+from transformers import AutoTokenizer
+from .constants import MAX_LEN
 from .preprocess import preprocess_text
 
 CURRENT_DIR = pathlib.Path(__file__).parent.resolve()
@@ -41,7 +40,7 @@ def vectorize_batch(texts: list[str]) -> torch.Tensor:
         return_tensors="pt",
         padding=True,
         truncation=True,
-        max_length=EMBED_DIM
+        max_length=MAX_LEN
     )
     with torch.no_grad():
         outputs = _model(**inputs)
