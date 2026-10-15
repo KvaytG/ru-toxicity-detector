@@ -13,9 +13,5 @@ dist/
 .venv/
 venv/
 
-# Tests
-tests/
-test/
-
-# Models and large resources
-src/toxicity_detector/resources/rubert_tiny_onnx/
+# Test artifacts
+.pytest_cache/

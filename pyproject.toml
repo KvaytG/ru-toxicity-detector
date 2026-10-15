@@ -1,21 +1,16 @@
 [project]
 name = "ru-toxicity-detector"
-version = "2.0.0"
-description = "A simple toxicity detector."
+version = "3.0.0"
+description = "Russian toxicity detection powered by a pretrained transformer."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "torch>=2.0.0",
-    "transformers>=4.30.0",
-    "optimum[onnxruntime]>=1.11.0",
-    "numpy>=1.24.0",
-    "pandas>=2.0.0",
-    "scikit-learn>=1.2.0",
-    "tqdm>=4.65.0"
+    "transformers>=4.40.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest>=7.0.0"]
 
 [build-system]
 requires = ["setuptools>=61.0"]
@@ -28,8 +23,6 @@ package-dir = {"" = "src"}
 where = ["src"]
 include = ["toxicity_detector*"]
 
-[tool.setuptools.package-data]
-"toxicity_detector" = [
-    "resources/vocab.json",
-    "resources/toxicity-model.pt"
-]
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

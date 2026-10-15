@@ -1,32 +1,31 @@
-
 # ru-toxicity-detector
 
-![US](https://kvaytg.ru/common/flags/us-21x16.svg) **English** | [![RU](https://kvaytg.ru/common/flags/ru-21x16.svg) Русский](README.ru.md)
+![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue) ![License](https://img.shields.io/badge/License-PolyForm-blue) [![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red)](https://kvaytg.ru/donate.php?lang=en)
 
-![Python 3.10](https://img.shields.io/badge/Python-3.10-blue) ![PolyForm License](https://img.shields.io/badge/License-PolyForm-blue) [![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red)](https://kvaytg.ru/donate.php?lang=en)
+Russian text toxicity detection powered by [KvaytG/rubert-tiny2-toxic-detector](https://huggingface.co/KvaytG/rubert-tiny2-toxic-detector).
 
-A simple toxicity detector.
+## How it works
 
-## 🔍 About
+The package runs the pretrained sequence-classification model directly through Hugging Face Transformers.
 
-### How It works
+The default toxicity threshold is `0.70`. A text is marked toxic when its predicted toxicity probability is strictly greater than the configured threshold. The returned `score` is the probability rounded to four decimal places.
 
-The model is built on [rubert-tiny2](https://huggingface.co/cointegrated/rubert-tiny2) and trained using knowledge distillation from the more powerful [russian_toxicity_classifier](https://huggingface.co/s-nlp/russian_toxicity_classifier). The architecture features a hybrid approach: neural network embeddings are supplemented by signals from a built-in profanity dictionary (including an exceptions system). This allows the model to achieve high accuracy while maintaining a minimal size.
+The model and tokenizer are downloaded from Hugging Face the first time the detector is initialized and cached for later use. An internet connection is needed on first load unless `model_name` points to a local copy.
 
-### Evaluation Results
+## Installation
 
-The model was tested on an independent test set of **102,308** lines that was completely unseen during training. To minimize false positives, the classification threshold was dynamically optimized for **Precision 95%** on the validation set and saved directly inside the model weights file.
+```bash
+pip install git+https://github.com/KvaytG/ru-toxicity-detector.git
+```
 
-| Metric                | Value    | Comment                                       |
-|-----------------------|----------|-----------------------------------------------|
-| **Accuracy**          | 1.00     | High value due to significant class imbalance |
-| **Precision (Toxic)** | **0.95** | **95%** accuracy in classifying toxic content |
-| **Recall (Toxic)**    | 0.70     | The model detects ~70% of all toxic messages  |
-| **F1-score (Toxic)**  | 0.80     | Harmonic mean of precision and recall         |
+For local development:
 
-The high **Precision (0.95)** ensures that the model almost never produces false positives. The lower Recall (0.70) is a deliberate trade-off to ensure a comfortable user experience without aggressive over-blocking.
+```bash
+pip install -e ".[dev]"
+```
 
-## 📚 Usage
+## Usage
+
 ```python
 from toxicity_detector import ToxicityDetector
 
@@ -34,8 +33,8 @@ from toxicity_detector import ToxicityDetector
 detector = ToxicityDetector(device="cpu")
 
 texts = [
-    "Я люблю тебя",  # {'is_toxic': False, 'score': 0.0122}
-    "Ты дуралей"     # {'is_toxic': True,  'score': 0.822}
+    "Я люблю тебя",  # {'is_toxic': False, 'score': 0.0119}
+    "Пошёл нахуй"    # {'is_toxic': True,  'score': 0.9736}
 ]
 
 # Predict one by one
@@ -48,12 +47,36 @@ for idx, res in enumerate(results, start=1):
     print(f"{idx}) {res}")
 ```
 
-## 📥 Installation
-```bash
-pip install git+https://github.com/KvaytG/ru-toxicity-detector.git
+## Threshold and device
+
+```python
+# Use a stricter threshold to reduce false positives or a lower one to
+# increase sensitivity. The appropriate value depends on your use case.
+detector = ToxicityDetector(threshold=0.80, device="cpu")
+
+# If a compatible CUDA-enabled PyTorch installation is available:
+detector = ToxicityDetector(device="cuda")
 ```
 
-## 📝 License
-Licensed under the **[PolyForm Noncommercial](LICENSE.md)** license.
+Constructor options:
 
-This project uses open-source components. For license details see **[pyproject.toml](pyproject.toml)** and dependencies' official websites.
+| Argument     | Default                                | Description                                      |
+|--------------|----------------------------------------|--------------------------------------------------|
+| `threshold`  | `0.70`                                 | Toxicity probability cutoff, from `0.0` to `1.0` |
+| `device`     | `"cpu"`                                | PyTorch inference device                         |
+| `model_name` | `"KvaytG/rubert-tiny2-toxic-detector"` | Hugging Face model ID or local model directory   |
+| `max_length` | `128`                                  | Maximum token sequence length                    |
+| `batch_size` | `64`                                   | Number of texts per inference batch              |
+
+Both `predict(text)` and `predict_batch(texts)` return dictionaries with the same fields:
+
+- `is_toxic`: whether the probability is strictly greater than the configured threshold.
+- `score`: predicted toxicity probability, rounded to four decimal places.
+
+## Model and evaluation
+
+See the [model card](https://huggingface.co/KvaytG/rubert-tiny2-toxic-detector) for training details, evaluation metrics, the recommended threshold, and the model's Apache-2.0 license.
+
+## Project license
+
+This project's source code is distributed under the [PolyForm Noncommercial License](LICENSE.md). The pretrained model and its usage are subject to the model's own license and terms.
