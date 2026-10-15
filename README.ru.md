@@ -1,5 +1,7 @@
 # ru-toxicity-detector
 
+[English](README.md) | **Русский**
+
 ![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue) ![License](https://img.shields.io/badge/Лицензия-PolyForm-blue) [![Sponsor](https://img.shields.io/badge/Поддержать-%E2%9D%A4-red)](https://kvaytg.ru/donate.php?lang=ru)
 
 Определение токсичности русскоязычного текста с помощью модели [KvaytG/rubert-tiny2-toxic-detector](https://huggingface.co/KvaytG/rubert-tiny2-toxic-detector).
